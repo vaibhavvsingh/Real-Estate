@@ -36,11 +36,22 @@ export default function SearchFilters() {
       const fetchData = async () => {
         setLoading(true);
         const data = await fetchApi(`${baseUrl}/auto-complete?query=${searchTerm}`);
+        console.log(data);
         setLoading(false);
         setLocationData(data?.hits);
       };
-
-      fetchData();
+      const debounce = function (fn,d){
+        let timer;
+        return function(){
+          let context = this, args=arguments;
+          clearTimeout(timer);
+          timer=setTimeout(()=>{
+            fn.apply(context,args);
+          },d);
+        }
+      }
+      const fetcher = debounce(fetchData,500);
+      fetcher();
     }
   }, [searchTerm]);
 
